@@ -14,6 +14,8 @@ export function autocomplete(data, args) {
     return [];
 }
 
+const factionManagerOutputFile = "/Temp/affordable-augs.txt"; // Temp file produced by faction manager with status information
+
 /** @param {NS} ns **/
 export async function main(ns) {
     const options = getConfiguration(ns, argsSchema);
@@ -92,6 +94,15 @@ export async function main(ns) {
                         `Power: ${gangInfo.power.toLocaleString('en')}  Clash ${gangInfo.territoryWarfareEngaged ? "enabled" : "disabled"} ` +
                         `(${(gangInfo.territoryClashChance * 100).toFixed(0)}% chance)`);
                 }
+            }
+
+            const facManOutput = getFactionManagerOutput(ns)
+            if (facManOutput && (facManOutput.affordable_augs.length || facManOutput.affordable_nf_count)) {
+                let augs = facManOutput.affordable_augs.length;
+                if (facManOutput.affordable_nf_count > 0) {
+                    augs --; // do not count NF twice
+                }
+                addHud("Augs/NF", `${augs}/${facManOutput.affordable_nf_count}`, 'Affordable Augs/NFs');
             }
 
             // Show Karma if we're not in a gang yet
@@ -189,6 +200,15 @@ async function getGangInfo(ns) {
 async function getAllServersInfo(ns) {
     const serverNames = await getNsDataThroughFile(ns, 'scanAllServers(ns)', '/Temp/scanAllServers.txt');
     return await getNsDataThroughFile(ns, 'ns.args.map(ns.getServer)', '/Temp/getServers.txt', serverNames);
+}
+
+/** Retrieves the last faction manager output file, parses, and types it.
+ * @param {NS} ns 
+ * @returns {{ affordable_nf_count: number, affordable_augs: [string], owned_count: number, unowned_count: number, total_rep_cost: number, total_aug_cost: number }}
+ */
+function getFactionManagerOutput(ns) {
+	const facmanOutput = ns.read(factionManagerOutputFile)
+	return !facmanOutput ? null : JSON.parse(facmanOutput)
 }
 
 function addCSS(doc) {
