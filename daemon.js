@@ -101,7 +101,7 @@ let maxPreppingAtMaxTargets = 3; // The max servers we can prep when we're at ou
 let homeReservedRam = 0; // (Set in command line args)
 
 let allHostNames = (/**@returns {string[]}*/() => [])(); // simple name array of servers that have been discovered
-let _allServers = (/**@returns{Server[]}*/() => [])(); // Array of Server objects - our internal model of servers for hacking
+let _allServers = (/**@returns {Server[]}*/() => [])(); // Array of Server objects - our internal model of servers for hacking
 // Lists of tools (external scripts) run
 let hackTools, asynchronousHelpers, periodicScripts;
 // toolkit var for remembering the names and costs of the scripts we use the most
