@@ -13,7 +13,7 @@ export async function main(ns) {
         await ns.sleep(sleepDuration);
     do {
         if (!await ns.hack(ns.args[0], { stock: manipulateStock }) && !disableToastWarnings)
-            ns.toast(`Warning, hack stole 0 money. Might be a misfire. ${JSON.stringify(ns.args)}`, 'warning');
+            //ns.toast(`Warning, hack stole 0 money. Might be a misfire. ${JSON.stringify(ns.args)}`, 'warning');
         if (loop) await ns.sleep(cycleTime - expectedDuration);
     } while (loop);
 }
