@@ -5,7 +5,7 @@ export async function main(ns) {
     const sleepDuration = ns.args.length > 1 ? ns.args[1] - Date.now() : 0;
     const expectedDuration = ns.args.length > 3 ? ns.args[3] : 0;
     const manipulateStock = ns.args.length > 5 && ns.args[5] ? true : false;
-    const disableToastWarnings = ns.args.length > 6 ? ns.args[6] : false;
+    const disableToastWarnings = ns.args.length > 6 ? ns.args[6] : true;
     const loop = ns.args.length > 7 ? ns.args[7] : false;
     let cycleTime = expectedDuration * 4;
     if (cycleTime < 100) cycleTime = Math.max(1, Math.min(5, cycleTime * 2)); // For fast hacking loops, inject a delay on hack in case grow/weaken are running a bit slow.
