@@ -26,7 +26,7 @@ const argsSchema = [ // The set of all command line arguments
 	['wait-for-4s-threshold', 0.9], // Set to 0 to not reset until we have 4S. If money is above this ratio of the 4S Tix API cost, don't reset until we buy it.
 	['disable-wait-for-4s', false], // If true, will doesn't wait for the 4S Tix API to be acquired under any circumstantes
 	['disable-rush-gangs', false], // Set to true to disable focusing work-for-faction on Karma until gangs are unlocked
-	['disable-casino', false], // Set to true to disable running the casino.js script automatically
+	['disable-casino', true], // Set to true to disable running the casino.js script automatically
 	['on-completion-script', null], // Spawn this script when we defeat the bitnode
 	['on-completion-script-args', []], // Optional args to pass to the script when we defeat the bitnode
 	['enable-Infiltration', false],
