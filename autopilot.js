@@ -30,6 +30,7 @@ const argsSchema = [ // The set of all command line arguments
 	['on-completion-script', null], // Spawn this script when we defeat the bitnode
 	['on-completion-script-args', []], // Optional args to pass to the script when we defeat the bitnode
 	['enable-Infiltration', false],
+	['enable-autoCorp', false],
 ];
 export function autocomplete(data, args) {
 	data.flags(argsSchema);
@@ -67,7 +68,7 @@ export async function main(ns) {
 
 	log(ns, "INFO: Auto-pilot engaged...", true, 'info');
 	// The game does not allow boolean flags to be turned "off" via command line, only on. Since this gets saved, notify the user about how they can turn it off.
-	const flagsSet = ['disable-auto-destroy-bn', 'disable-bladeburner', 'disable-wait-for-4s', 'disable-rush-gangs', 'enable-casino', 'enable-Infiltration'].filter(f => options[f]);
+	const flagsSet = ['disable-auto-destroy-bn', 'disable-bladeburner', 'disable-wait-for-4s', 'disable-rush-gangs', 'enable-casino', 'enable-Infiltration', 'enable-autoCorp'].filter(f => options[f]);
 	for (const flag of flagsSet)
 		log(ns, `WARNING: You have previously enabled the flag "--${flag}". Because of the way this script saves its run settings, the ` +
 			`only way to now turn this back off will be to manually edit or delete the file ${ns.getScriptName()}.config.txt`, true);
@@ -322,6 +323,11 @@ async function checkOnRunningScripts(ns, player) {
 
 	// Hold back on launching certain scripts if we are low on home RAM
 	const homeRam = await getNsDataThroughFile(ns, `ns.getServerMaxRam(ns.args[0])`, `/Temp/getServerMaxRam.txt`, ["home"]);
+
+	if (!findScript('autoCorp.js') && homeRam >= 1024 && options['enable-Infiltration'])
+		{
+			launchScriptHelper(ns, 'autoCorp.js');
+		}
 
 	// Launch stock-master in a way that emphasizes it as our main source of income early-on
 	if (!findScript('stockmaster.js') && !reserveForDaedalus && homeRam >= 32)
