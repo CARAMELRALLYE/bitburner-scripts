@@ -550,3 +550,28 @@ export function unEscapeArrayArgs(args) {
     const escapeChars = ['"', "'", "`"];
     return args.map(arg => escapeChars.some(c => arg.startsWith(c) && arg.endsWith(c)) ? arg.slice(1, -1) : arg);
 }
+
+export function initializeHud(makeHUDKey, srcHUDKey, name, text) {
+    const d = eval("document");
+    let htmlDisplay = d.getElementById(`${makeHUDKey}-1`);
+    if (htmlDisplay !== null) return htmlDisplay;
+    // Get the custom display elements in HUD.
+    let customElements = d.getElementById(srcHUDKey).parentElement.parentElement;
+    // Make a clone of the hook for extra hud elements, and move it up under money
+    let stockValueTracker = customElements.cloneNode(true);
+    // Remove any nested elements created by stats.js
+    stockValueTracker.querySelectorAll("p > p").forEach(el => el.parentElement.removeChild(el));
+    // Change ids since duplicate id's are invalid
+    stockValueTracker.querySelectorAll("p").forEach((el, i) => el.id = makeHUDKey+ "-" + i);
+    // Get out output element
+    htmlDisplay = stockValueTracker.querySelector(`#${makeHUDKey}-1`);
+    // Display label and default value
+    stockValueTracker.querySelectorAll("p")[0].innerText = name;
+    htmlDisplay.innerText = text;
+    // Insert our element right after Money
+    customElements.parentElement.insertBefore(stockValueTracker, customElements.parentElement.childNodes[2]);
+    return htmlDisplay;
+}
+export function HUDUpdate(hudElement, price) {
+    if (hudElement) hudElement.innerText = formatMoney(price);
+}

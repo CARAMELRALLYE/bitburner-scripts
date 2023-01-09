@@ -14,13 +14,18 @@ export async function main(ns) {
 		}
 		ns.corporation.createCorporation("MyCorp");
 	}
-	var corp = ns.corporation.getCorporation();
-	if (corp.divisions.length < 1) {
-		// initial Company setup
-		ns.corporation.expandIndustry("Tobacco", "Tobacco");
-		corp = ns.corporation.getCorporation();
-		await initialCorpUpgrade(ns);
-		await initCities(ns, corp.divisions[0]);
+	
+	try {
+		var corp = ns.corporation.getCorporation();
+		if (corp.divisions.length < 1) {
+			// initial Company setup
+			ns.corporation.expandIndustry("Tobacco", "Tobacco");
+			corp = ns.corporation.getCorporation();
+			await initialCorpUpgrade(ns);
+			await initCities(ns, corp.divisions[0]);
+		}
+	} catch (err) {
+		return false;
 	}
 
 	let hudElement = initializeHud("Corp-display", "overview-money-hook", "Corp", "$0.00");
