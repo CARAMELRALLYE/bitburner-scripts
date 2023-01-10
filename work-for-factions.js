@@ -805,6 +805,7 @@ export async function workForSingleFaction(ns, factionName, forceUnlockDonations
     let bestFactionJob = null;
     while ((currentReputation = (await getFactionReputation(ns, factionName))) < factionRepRequired) {
         if (breakToMainLoop()) return ns.print('INFO: Interrupting faction work to check on high-level priorities.');
+        factionWork ??= await detectBestFactionWork(ns, factionName); // When we first start working, determine what work gives the most rep/second for our current stats
         const currentWork = await getCurrentWorkInfo(ns);
         let factionJob = currentWork.factionWorkType;
         // Detect if faction work was interrupted and log a warning
@@ -828,20 +829,13 @@ export async function workForSingleFaction(ns, factionName, forceUnlockDonations
         if (!workAssigned) {
             if (await startWorkForFaction(ns, factionName, bestFactionJob, shouldFocus)) {
                 workAssigned = true;
-<<<<<<< HEAD
                 isWorking = true;
-=======
->>>>>>> ac436a13850f02fed43c8fda9096b37ab7626909
                 if (shouldFocus) ns.tail(); // Keep a tail window open if we're stealing focus
             } else {
                 log(ns, `ERROR: Something went wrong, failed to start "${bestFactionJob}" work for faction "${factionName}" (Is gang faction, or not joined?)`, false, 'error');
                 break;
             }
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> ac436a13850f02fed43c8fda9096b37ab7626909
         let status = `Doing '${bestFactionJob}' work for "${factionName}" until ${Math.round(factionRepRequired).toLocaleString('en')} rep.`;
         if (lastFactionWorkStatus != status || (Date.now() - lastStatusUpdateTime) > statusUpdateInterval) {
             lastFactionWorkStatus = status;
@@ -879,11 +873,7 @@ async function stop(ns) { return await getNsDataThroughFile(ns, `ns.singularity.
 /** Start the specified faction work
  * @param {NS} ns */
 async function startWorkForFaction(ns, factionName, work, focus) {
-<<<<<<< HEAD
     log(ns, `INFO: startWorkForFaction(${factionName}, ${work}, ${focus})`);
-=======
-    //log(ns, `INFO: startWorkForFaction(${factionName}, ${work}, ${focus})`);
->>>>>>> ac436a13850f02fed43c8fda9096b37ab7626909
     return await getNsDataThroughFile(ns, `ns.singularity.workForFaction(ns.args[0], ns.args[1], ns.args[2])`,
         '/Temp/workForFaction.txt', [factionName, work, focus])
 }
