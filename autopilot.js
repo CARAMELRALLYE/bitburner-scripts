@@ -450,9 +450,14 @@ async function maybeDoCasino(ns, player) {
 		await ns.sleep(200); // Wait a short while for the dust to settle.
 	} else if (casinoRanFileSet)
 		return ranCasino = true;
+<<<<<<< HEAD
 	//If it's been less than 1 minute, wait a while to establish income
 	//Unless we have CashRoot Starter Kit, at which point we should head straight to the casino
 	//Or if BN8, as that also gives us plenty of starter cash to casino immediately
+=======
+	// If it's been less than 1 minute, wait a while to establish income
+	// The exception is if we are in BN8 and have CashRoot Starter Kit. In this case we can head straight to the casino.
+>>>>>>> ac436a13850f02fed43c8fda9096b37ab7626909
 	if (player.playtimeSinceLastAug < 60000 && !(player.bitNodeN == 8 && cashRootBought))
 		return;
 	// If we're making more than ~5b / minute, no need to run casino. (Unless BN8, if BN8 we always need casino cash bootstrap)
