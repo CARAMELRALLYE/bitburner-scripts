@@ -803,6 +803,7 @@ export async function workForSingleFaction(ns, factionName, forceUnlockDonations
     let lastStatusUpdateTime = 0;
     let workAssigned = false; // Use to track whether work previously assigned by this script is being disrupted
     let bestFactionJob = null;
+    let factionWork = null;
     while ((currentReputation = (await getFactionReputation(ns, factionName))) < factionRepRequired) {
         if (breakToMainLoop()) return ns.print('INFO: Interrupting faction work to check on high-level priorities.');
         factionWork ??= await detectBestFactionWork(ns, factionName); // When we first start working, determine what work gives the most rep/second for our current stats
