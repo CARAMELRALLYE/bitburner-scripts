@@ -803,10 +803,8 @@ export async function workForSingleFaction(ns, factionName, forceUnlockDonations
     let lastStatusUpdateTime = 0;
     let workAssigned = false; // Use to track whether work previously assigned by this script is being disrupted
     let bestFactionJob = null;
-    let factionWork = null;
     while ((currentReputation = (await getFactionReputation(ns, factionName))) < factionRepRequired) {
         if (breakToMainLoop()) return ns.print('INFO: Interrupting faction work to check on high-level priorities.');
-        factionWork ??= await detectBestFactionWork(ns, factionName); // When we first start working, determine what work gives the most rep/second for our current stats
         const currentWork = await getCurrentWorkInfo(ns);
         let factionJob = currentWork.factionWorkType;
         // Detect if faction work was interrupted and log a warning
@@ -830,13 +828,13 @@ export async function workForSingleFaction(ns, factionName, forceUnlockDonations
         if (!workAssigned) {
             if (await startWorkForFaction(ns, factionName, bestFactionJob, shouldFocus)) {
                 workAssigned = true;
-                isWorking = true;
                 if (shouldFocus) ns.tail(); // Keep a tail window open if we're stealing focus
             } else {
                 log(ns, `ERROR: Something went wrong, failed to start "${bestFactionJob}" work for faction "${factionName}" (Is gang faction, or not joined?)`, false, 'error');
                 break;
             }
         }
+
         let status = `Doing '${bestFactionJob}' work for "${factionName}" until ${Math.round(factionRepRequired).toLocaleString('en')} rep.`;
         if (lastFactionWorkStatus != status || (Date.now() - lastStatusUpdateTime) > statusUpdateInterval) {
             lastFactionWorkStatus = status;
@@ -845,7 +843,8 @@ export async function workForSingleFaction(ns, factionName, forceUnlockDonations
             const repGainRate = await measureFactionRepGainRate(ns, factionName);
             const eta_milliseconds = 1000 * (factionRepRequired - currentReputation) / repGainRate;
             ns.print(`${status} Currently at ${Math.round(currentReputation).toLocaleString('en')}, ` +
-                `earning ${formatNumberShort(repGainRate)} rep/sec. (ETA: ${formatDuration(eta_milliseconds)})`);
+                `earning ${formatNumberShort(repGainRate)} rep/sec. ` +
+                (hasFocusPenalty && !shouldFocus ? '(after 20% non-focus Penalty) ' : '') + `(ETA: ${formatDuration(eta_milliseconds)})`);
         }
         await tryBuyReputation(ns);
         await ns.sleep(loopSleepInterval);
